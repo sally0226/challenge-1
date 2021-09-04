@@ -48,7 +48,7 @@ app.use(expressSession({
 }))
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use('/',router);
+app.use('/api',router);
 
 let root = path.join(__dirname, '../frontend/build')
 app.use(express.static(root));
