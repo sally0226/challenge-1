@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { withStyles, Box, Button, TextField } from '@material-ui/core';
 import { useSendAuthMail, useCheckAuthMail, useCheckUniqueId, useSignUpUser } from '../MVVM/ViewModel/UserViewModel';
+import { REGULAR_PW } from '../RegularExpression';
 
 const CssTextField = withStyles({
 	root: {
@@ -73,6 +74,9 @@ function RegisterForm({ changeStatus }) {
 		if (!isMailAuth) message = "이메일 인증을 완료해주세요";
 		// ID 중복 확인
 		if (!isIdUnique) message = "ID 중복 확인을 완료해주세요";
+		// 비밀번호 정규식 확인 
+		const check = REGULAR_PW.exec(userInfo.pw);
+		if (check[0] !== userInfo.pw) message = "비밀번호 양식을 맞춰주세요 (영어,숫자,특수문자/8~20자리)";
 		// pw 두개 똑같이 입력했는지 확인
 		if (!(validPw === userInfo.pw)) message = "비밀번호, 비밀번호 확인란을 동일하게 입력해주세요";
 		// 이메일 양식 확인
@@ -186,6 +190,10 @@ function RegisterForm({ changeStatus }) {
 						type="password"
 						placeholder="비밀번호를 입력하세요"
 						value={userInfo.pw}
+						error={()=>{
+							const check = REGULAR_PW.exec(userInfo.pw);
+							return check[0] === userInfo.pw;
+						}}
 						onChange={updateField}
 					/>
 				</Box>
