@@ -16,7 +16,6 @@ var User = new Schema({
 });
 
 User.pre("save", function(next) {
-	console.log("aaaaaaaaa");
 	var user = this;
 	if (user.isModified("user_pw")) {
 		bcrypt.genSalt(10, (err,salt) => {
@@ -40,12 +39,9 @@ User.statics.create = function(user_id,user_pw,user_name,user_email,git_id,in_da
 		git_id: git_id,
 		in_date: in_date,
 		last_update: last_update
-	})
-
-  console.log('user만들어짐 :'+user_id);
-  
+	});
   // return the Promise
-  return user.save()
+  return user.save();
 }
 
 

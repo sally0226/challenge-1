@@ -47,9 +47,17 @@ app.use(expressSession({
 }))
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(jwtMiddleware); // jwt 해석해서 user정보 req에 넣어주는 미들웨어
+app.use(jwtMiddleware); // jwt 해석해서 user정보 req에 넣어주는 middleware
 app.use('/api',router);
-
+app.use(function (error, req, res, next) { // error handling middleware
+	// 404이외의 다른 발생가능한 error도 추후에 처리하는거 추가해줘야함 
+	if (error.status == 404){
+		res.status(404).send({error : "not found"});
+	}
+	else {
+		res.status(error.status).send({error : error.message});
+	}
+});
 if(process.env.NODE_ENV=='production') {
 	let root = path.join(__dirname, '../frontend/build')
 	app.use(express.static(root));

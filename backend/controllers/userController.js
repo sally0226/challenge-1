@@ -27,18 +27,14 @@ async function CreateUser(req, res, next) {
 		let today = getCurrentDate();
 		const in_date = today;
 		const last_update = today;
-
-		const user = await User.findOneByUserId(user_id);
-		if (user) {
-			console.log(user);
-			throw 'user exists';
-		} else {
-			await User.create(user_id, user_pw, user_name, user_email, git_id, in_date, last_update);
-			await CreateGitData(user_id);
-		}
+		
+		await User.create(user_id, user_pw, user_name, user_email, git_id, in_date, last_update);
+		await CreateGitData(user_id);
 		res.status(201).json({ result: true });
 	} catch (err) {
-		res.status(401).json({ error: err });
+		if (err.code == 11000) {
+			err.status = 404;
+		}
 		next(err);
 	}
 }

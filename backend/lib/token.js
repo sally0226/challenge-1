@@ -14,8 +14,10 @@ function decodeToken(token) {
 async function jwtMiddleware(req, res, next) {
     const token = req.cookies.user;
     console.log(token);
-    if (!token) next(); // 토큰이 없으면 바로 종료
-
+    if (token == undefined) {
+        next(); // 토큰이 없으면 바로 종료
+        return;
+    }   
     try {
         const decoded = await decodeToken(token);
         //console.log(decoded); // iat: 발급 시점, exp: 만료 시점 (초 단위)
