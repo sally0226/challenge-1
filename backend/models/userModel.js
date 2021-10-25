@@ -16,6 +16,7 @@ var User = new Schema({
 });
 
 User.pre("save", function(next) {
+	console.log("aaaaaaaaa");
 	var user = this;
 	if (user.isModified("user_pw")) {
 		bcrypt.genSalt(10, (err,salt) => {
@@ -48,15 +49,8 @@ User.statics.create = function(user_id,user_pw,user_name,user_email,git_id,in_da
 }
 
 
-User.statics.findOneByUsername = function(user_id) {
-  return this.findOne({
-		user_id
-  }).exec()
-}
-
-User.statics.getUserById = async function(id) {
-	const result = await this.findOne({"user_id": id});
-	return result;
+User.statics.findOneByUserId = function(user_id) {
+  return this.findOne({ user_id }).exec();
 }
 
 User.statics.loginCheck = async function(id,pw) {
@@ -75,7 +69,6 @@ User.statics.loginCheck = async function(id,pw) {
 }
 
 User.statics.changePw = async function(id,pw){
-	console.log("hi");
 	bcrypt.genSalt(10, (err,salt) => {
 		if (err) return next(err);
 		bcrypt.hash(pw, salt, async (err, hash) => {
@@ -85,5 +78,9 @@ User.statics.changePw = async function(id,pw){
 		});
 	});
 
+}
+
+User.statics.deleteUser = function(user_id){
+	return this.findOneAndDelete({user_id}).exec();
 }
 module.exports = mongoose.model('user',User);

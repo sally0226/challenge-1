@@ -6,7 +6,7 @@ async function CreateInitData(req, res, next) {
     try {
         const { user_id } = req.body;
 
-        const user = await User.findOneByUsername(user_id);
+        const user = await User.findOneByUserId(user_id);
         if (user) {
 			// 이미 생성된 grass가 있는지?
 			const grass = await gitData.findOneByUserId(user_id)

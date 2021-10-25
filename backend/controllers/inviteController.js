@@ -26,7 +26,7 @@ async function CreateInvite(req, res) {
 		const challenge_id = ObjectId(ch_id)
 		const { invite_email, send_user } = req.body;
 
-		const user = await User.findOneByUsername(send_user);
+		const user = await User.findOneByUserId(send_user);
 		if (user === null) throw 'not exist user'
 
 		const challenge = await Challenge.findById(challenge_id);

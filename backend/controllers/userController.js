@@ -4,10 +4,7 @@ const jwt = require('jsonwebtoken');
 const { createToken, jwtMiddleware } = require('../lib/token');
 const Challenge = require('../models/challengeModel');
 const { ObjectID } = require('bson');
-const { find } = require('../models/userModel');
-const { json } = require('body-parser');
 const { CreateGitData } = require('../functions/crawling');
-
 
 require("dotenv").config();
 const SecretKey = process.env.SECRET_KEY;
@@ -21,7 +18,6 @@ function getCurrentDate() {
 	var seconds = date.getSeconds();
 	var milliseconds = date.getMilliseconds();
 	return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
-
 }
 
 async function CreateUser(req, res, next) {
@@ -32,7 +28,7 @@ async function CreateUser(req, res, next) {
 		const in_date = today;
 		const last_update = today;
 
-		const user = await User.findOneByUsername(user_id);
+		const user = await User.findOneByUserId(user_id);
 		if (user) {
 			console.log(user);
 			throw 'user exists';
@@ -49,9 +45,9 @@ async function CreateUser(req, res, next) {
 
 async function CheckIdDupl(req, res) { // id 중복체크용
 	try {
-		const input_id = req.params.user_id;
+		const user_id = req.params.user_id;
 		console.log(input_id);
-		const result = await User.getUserById(input_id);
+		const result = await User.findOneByUserId(user_id);
 		if (result) { // 중복 
 			res.status(201).json({ duplicate: true });
 		}
@@ -66,7 +62,7 @@ async function CheckIdDupl(req, res) { // id 중복체크용
 }
 function DeleteUser(req, res) {
 	var _id = req.params.id;
-	var deluser = User.findOne({ user_id: _id });
+	var deluser = User.findOneByUserId(_id);
 	var chlist = deluser.ch_list;
 	var length = len(chlist);
 
@@ -156,7 +152,7 @@ function GetChallengeList(req, res) {		// user_id를 기반으로 user의 ch_lis
 			return challengeList
 		}
 
-		User.findOneByUsername(user_id)
+		User.findOneByUserId(userId)
 			.then((user) => {
 				if (user) {
 					list = user.ch_list;
@@ -185,7 +181,7 @@ function OutChallenge(req, res) {
 
 	var chArray
 
-	User.findOneByUsername(user_id)
+	User.findOneByUserId(userId)
 		.then((user) => {
 			chArray = user.ch_list
 
@@ -400,7 +396,7 @@ async function ChangePw(req, res) {
 async function UserInfomation(req, res) {
 	try {
 		const user_id = req.params.user_id;
-		const user = await User.findOneByUsername(user_id);
+		const user = await User.findOneByUserId(user_id);
 
 		res.status(200).json({ user_name: user.user_name, user_email: user.user_email, git_id: user.git_id });
 	} catch (err) {

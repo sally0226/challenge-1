@@ -25,7 +25,7 @@ async function CreateChallenge(req, res) {
 				res.send('false');
 			})
 			.then(async (ch_id) => {
-				_user = await User.findOneByUsername(user_id)
+				_user = await User.findOneByUserId(user_id)
 				var chArray;
 				chArray = _user.ch_list
 				_challenge = await Challenge.findById(ch_id)
@@ -320,7 +320,7 @@ async function JoinChallenge(req, res) {
 
 	try {
 		const challenge = await Challenge.findById(id)
-		const user = await User.findOneByUsername(user_id)
+		const user = await User.findOneByUserId(user_id)
 		if(challenge === null || user === null) throw "잘못된 요청입니다."
 		if (challenge.private_key === private_key){
 			let result = await join(challenge, user);
